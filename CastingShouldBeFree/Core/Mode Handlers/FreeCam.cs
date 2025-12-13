@@ -9,17 +9,18 @@ namespace CastingShouldBeFree.Core.Mode_Handlers;
 public class FreeCam : ModeHandlerBase
 {
     private float pitch;
+    private float yaw;
 
-    private         float  yaw;
     public override string HandlerName       => "Free Cam";
     public override bool   IsPlayerDependent => false;
 
     private void LateUpdate()
     {
-        float speed = UnityInput.Current.GetKey(KeyCode.LeftShift) ? 30f : 10f;
-        speed *= Time.deltaTime;
+        float baseSpeed = UnityInput.Current.GetKey(KeyCode.LeftShift) ? 30f : 10f;
+        float speed     = baseSpeed * Time.deltaTime;
 
         Vector3 movementDir = Vector3.zero;
+        float   analogScale = 1f;
 
         if (UnityInput.Current.GetKey(KeyCode.W)) movementDir           += CameraHandler.Instance.transform.forward;
         if (UnityInput.Current.GetKey(KeyCode.S)) movementDir           -= CameraHandler.Instance.transform.forward;
@@ -28,22 +29,64 @@ public class FreeCam : ModeHandlerBase
         if (UnityInput.Current.GetKey(KeyCode.Space)) movementDir       += Vector3.up;
         if (UnityInput.Current.GetKey(KeyCode.LeftControl)) movementDir -= Vector3.up;
 
-        movementDir.Normalize();
-        movementDir    *= speed;
-        targetPosition += movementDir;
+        Gamepad pad = Gamepad.current;
+        if (pad != null)
+        {
+            Vector2 moveStick = pad.leftStick.ReadValue();
+            float   magnitude = Mathf.Clamp01(moveStick.magnitude);
+
+            if (magnitude > 0.001f)
+            {
+                Vector2 dir = moveStick.normalized;
+
+                movementDir += CameraHandler.Instance.transform.forward * dir.y;
+                movementDir += CameraHandler.Instance.transform.right   * dir.x;
+
+                analogScale = magnitude;
+            }
+
+            float up   = pad.rightTrigger.ReadValue();
+            float down = pad.leftTrigger.ReadValue();
+
+            movementDir += Vector3.up * (up - down);
+            analogScale =  Mathf.Max(analogScale, Mathf.Max(up, down));
+        }
+
+        if (movementDir.sqrMagnitude > 0f)
+        {
+            movementDir.Normalize();
+            movementDir    *= speed * analogScale;
+            targetPosition += movementDir;
+        }
+
+        bool    rotating  = false;
+        Vector2 lookDelta = Vector2.zero;
+        float   lookSpeed = 6f;
 
         if (Mouse.current.rightButton.isPressed)
         {
-            Vector2     mouseDelta  = Mouse.current.delta.ReadValue();
-            const float Sensitivity = 6f;
+            lookDelta        = Mouse.current.delta.ReadValue();
+            rotating         = true;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else if (pad != null)
+        {
+            Vector2 stickLook = pad.rightStick.ReadValue();
+            if (stickLook.sqrMagnitude > 0.001f)
+            {
+                lookDelta = stickLook * 80f;
+                lookSpeed = 3.5f;
+                rotating  = true;
+            }
+        }
 
-            yaw   += mouseDelta.x * Sensitivity * Time.deltaTime;
-            pitch -= mouseDelta.y * Sensitivity * Time.deltaTime;
+        if (rotating)
+        {
+            yaw   += lookDelta.x * lookSpeed * Time.deltaTime;
+            pitch -= lookDelta.y * lookSpeed * Time.deltaTime;
             pitch =  Mathf.Clamp(pitch, -89f, 89f);
 
             targetRotation = Quaternion.Euler(pitch, yaw, 0f);
-
-            Cursor.lockState = CursorLockMode.Locked;
         }
         else
         {
@@ -62,19 +105,31 @@ public class FreeCam : ModeHandlerBase
                 Vector3 velocity        = (targetPosition - lastPosition) / Time.deltaTime;
                 Vector3 angularVelocity = targetRotation.GetAngularVelocity(lastRotation, Time.deltaTime);
 
-                otherTargetPos = Vector3.Lerp(CameraHandler.Instance.transform.position, targetPosition,
-                        Time.deltaTime * realSmoothingFactor * velocity.magnitude);
+                otherTargetPos = Vector3.Lerp(
+                        CameraHandler.Instance.transform.position,
+                        targetPosition,
+                        Time.deltaTime * realSmoothingFactor * velocity.magnitude
+                );
 
-                otherTargetRot = Quaternion.Slerp(CameraHandler.Instance.transform.rotation, targetRotation,
-                        Time.deltaTime * realSmoothingFactor * ParseAngularVelocity(angularVelocity));
+                otherTargetRot = Quaternion.Slerp(
+                        CameraHandler.Instance.transform.rotation,
+                        targetRotation,
+                        Time.deltaTime * realSmoothingFactor * ParseAngularVelocity(angularVelocity)
+                );
             }
             else
             {
-                otherTargetPos = Vector3.Lerp(CameraHandler.Instance.transform.position, targetPosition,
-                        Time.deltaTime * realSmoothingFactor);
+                otherTargetPos = Vector3.Lerp(
+                        CameraHandler.Instance.transform.position,
+                        targetPosition,
+                        Time.deltaTime * realSmoothingFactor
+                );
 
-                otherTargetRot = Quaternion.Slerp(CameraHandler.Instance.transform.rotation, targetRotation,
-                        Time.deltaTime * realSmoothingFactor);
+                otherTargetRot = Quaternion.Slerp(
+                        CameraHandler.Instance.transform.rotation,
+                        targetRotation,
+                        Time.deltaTime * realSmoothingFactor
+                );
             }
         }
 
