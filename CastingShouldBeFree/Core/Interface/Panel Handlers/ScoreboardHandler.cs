@@ -51,11 +51,11 @@ public class ScoreboardHandler : PanelHandlerBase
 
         private void Update()
         {
-            if (UnityInput.Current.GetKeyDown(KeyCode.V))
-            {
-                currentTimingIndex = (currentTimingIndex + 1) % 3;
-                if (currentTimingIndex == 1) StartCoroutine(Timing());
-            }
+            if (!UnityInput.Current.GetKeyDown(KeyCode.V))
+                return;
+
+            currentTimingIndex = (currentTimingIndex + 1) % 3;
+            if (currentTimingIndex == 1) StartCoroutine(Timing());
         }
 
         public void Initialize(TextMeshProUGUI timerText, TextMeshProUGUI lastTimeText)

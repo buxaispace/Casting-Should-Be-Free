@@ -33,8 +33,15 @@ public class TimeHandler : PanelHandlerBase
                                                                                                 .None;
                                                                          });
 
-        transform.GetChild(1).GetComponentInChildren<Slider>().maxValue =
-                BetterDayNightManager.instance.timeOfDayRange.Length;
+        try
+        {
+            transform.GetChild(1).GetComponentInChildren<Slider>().maxValue =
+                    BetterDayNightManager.instance.timeOfDayRange.Length;
+        }
+        catch
+        {
+            // ignored
+        }
 
         transform.GetChild(1).GetComponentInChildren<Slider>().onValueChanged.AddListener(value =>
         {
@@ -44,5 +51,18 @@ public class TimeHandler : PanelHandlerBase
         });
 
         base.Start();
+    }
+
+    private void OnEnable()
+    {
+        try
+        {
+            transform.GetChild(1).GetComponentInChildren<Slider>().maxValue =
+                    BetterDayNightManager.instance.timeOfDayRange.Length;
+        }
+        catch
+        {
+            // ignored
+        }
     }
 }
