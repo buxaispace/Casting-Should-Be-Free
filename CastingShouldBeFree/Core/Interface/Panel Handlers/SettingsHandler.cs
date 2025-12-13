@@ -13,6 +13,10 @@ namespace CastingShouldBeFree.Core.Interface.Panel_Handlers;
 public class SettingsHandler : PanelHandlerBase
 {
     private const string ThirdPersonXKey = "ThirdPersonX";
+    private const string ThirdPersonYKey = "ThirdPersonY";
+    private const string ThirdPersonZKey = "ThirdPersonZ";
+
+    [Range(0, 2)] private int thirdPersonSliderIndex;
 
     private void Awake()
     {
@@ -62,21 +66,70 @@ public class SettingsHandler : PanelHandlerBase
                 () => NametagHandler.Instance.NametagsEnabled,
                 () => NametagHandler.Instance.NametagsEnabled = !NametagHandler.Instance.NametagsEnabled);
 
+        SetUpThirdPersonSliders();
+    }
+
+    private void SetUpThirdPersonSliders()
+    {
         Transform thirdPersonSliderPanel = transform.Find("ThirdPersonPanel");
+
+        thirdPersonSliderPanel.GetComponentInChildren<Button>().onClick.AddListener(() =>
+            {
+                thirdPersonSliderIndex = (thirdPersonSliderIndex + 1) % 3;
+                thirdPersonSliderPanel.GetComponentInChildren<Slider>().value = PlayerPrefs.GetFloat(
+                        thirdPersonSliderIndex switch
+                        {
+                                0     => ThirdPersonXKey,
+                                1     => ThirdPersonYKey,
+                                var _ => ThirdPersonZKey,
+                        }, 0f);
+
+                thirdPersonSliderPanel.GetComponentInChildren<TextMeshProUGUI>().text =
+                        $"Third Person {thirdPersonSliderIndex switch
+                                        {
+                                                0     => "X",
+                                                1     => "Y",
+                                                var _ => "Z",
+                                        }}: {thirdPersonSliderPanel.GetComponentInChildren<Slider>().value.ToString("F", CultureInfo.InvariantCulture)}";
+            });
 
         thirdPersonSliderPanel.GetComponentInChildren<Slider>().onValueChanged.AddListener(value =>
             {
                 thirdPersonSliderPanel.GetComponentInChildren<TextMeshProUGUI>().text =
-                        $"Third Person Right: {value.ToString("F", CultureInfo.InvariantCulture)}";
+                        $"Third Person {thirdPersonSliderIndex switch
+                                        {
+                                                0     => "X",
+                                                1     => "Y",
+                                                var _ => "Z",
+                                        }}: {value.ToString("F", CultureInfo.InvariantCulture)}";
 
-                ThirdPersonHandler.X = value;
-                PlayerPrefs.SetFloat(ThirdPersonXKey, value);
+                switch (thirdPersonSliderIndex)
+                {
+                    case 0:
+                        ThirdPersonHandler.X = value;
+                        PlayerPrefs.SetFloat(ThirdPersonXKey, value);
+
+                        break;
+
+                    case 1:
+                        ThirdPersonHandler.Y = value;
+                        PlayerPrefs.SetFloat(ThirdPersonYKey, value);
+
+                        break;
+
+                    default:
+                        ThirdPersonHandler.Z = value;
+                        PlayerPrefs.SetFloat(ThirdPersonZKey, value);
+
+                        break;
+                }
             });
-
-        thirdPersonSliderPanel.GetComponentInChildren<Slider>().onValueChanged
-                             ?.Invoke(PlayerPrefs.GetFloat(ThirdPersonXKey, 0f));
-
+        
+        thirdPersonSliderPanel.GetComponentInChildren<Slider>().onValueChanged?.Invoke(PlayerPrefs.GetFloat(ThirdPersonXKey, 0f));
         thirdPersonSliderPanel.GetComponentInChildren<Slider>().value = PlayerPrefs.GetFloat(ThirdPersonXKey, 0f);
+        ThirdPersonHandler.X                                          = PlayerPrefs.GetFloat(ThirdPersonXKey, 0f);
+        ThirdPersonHandler.Y                                          = PlayerPrefs.GetFloat(ThirdPersonYKey, 0f);
+        ThirdPersonHandler.Z                                          = PlayerPrefs.GetFloat(ThirdPersonZKey, 0f);
     }
 
     private void SetUpSetting(string settingPath, string settingName, Func<bool> getSetting, UnityAction setSetting)

@@ -27,7 +27,9 @@ public class FirstPersonModeHandler : ModeHandlerBase
         }
 
         HandleGenericSmoothing(Time.deltaTime);
-        targetPosition = CoreHandler.Instance.CastedRig.headMesh.transform.TransformPoint(new Vector3(0f, 0.15f, 0f));
+        targetPosition =
+                CoreHandler.Instance.CastedRig.headMesh.transform.TransformPoint(new Vector3(0f, 0.15f, 0.15f));
+
         SetCameraPositionAndRotation();
     }
 

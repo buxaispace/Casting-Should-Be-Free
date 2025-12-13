@@ -5,7 +5,10 @@ namespace CastingShouldBeFree.Core.Mode_Handlers;
 public class ThirdPersonHandler : ModeHandlerBase
 {
     public static float X = 0f;
-    public static bool  BodyLocked;
+    public static float Y = 0f;
+    public static float Z = 0f;
+
+    public static bool BodyLocked;
 
     public override string HandlerName       => HandlerNameStatic();
     public override bool   IsPlayerDependent => true;
@@ -18,7 +21,8 @@ public class ThirdPersonHandler : ModeHandlerBase
         if (BodyLocked)
         {
             targetPosition =
-                    CoreHandler.Instance.CastedRig.bodyRenderer.transform.TransformPoint(new Vector3(X, 0.3f, -1f));
+                    CoreHandler.Instance.CastedRig.bodyRenderer.transform.TransformPoint(new Vector3(X, 0.3f + Y,
+                            -1f                                                                              + Z));
 
             Vector3 euler = CoreHandler.Instance.CastedRig.bodyRenderer.transform.rotation.eulerAngles;
             targetRotation = Quaternion.Euler(0f, euler.y, 0f);
@@ -26,7 +30,7 @@ public class ThirdPersonHandler : ModeHandlerBase
         else
         {
             targetPosition =
-                    CoreHandler.Instance.CastedRig.headMesh.transform.TransformPoint(new Vector3(X, 0.3f, -1f));
+                    CoreHandler.Instance.CastedRig.headMesh.transform.TransformPoint(new Vector3(X, 0.3f + Y, -1f + Z));
 
             targetRotation = CoreHandler.Instance.CastedRig.headMesh.transform.rotation;
             Vector3 forward = targetRotation * Vector3.forward;

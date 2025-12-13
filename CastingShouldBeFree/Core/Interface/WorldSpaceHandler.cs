@@ -73,25 +73,25 @@ public class WorldSpaceHandler : Singleton<WorldSpaceHandler>
     private void SetUpCameraLocking()
     {
         Canvas.transform.Find("MainPanel/LockButton/Collider").AddComponent<PressableButton>().OnPress = () =>
-        {
-            isInterfaceLocked = !isInterfaceLocked;
-
-            if (isInterfaceLocked)
             {
-                LockCamera(CoreHandler.Instance.CurrentHandlerName);
-                CoreHandler.Instance.OnCurrentHandlerChange += LockCamera;
-            }
-            else
-            {
-                Canvas.transform.SetParent(null);
-                Canvas.transform.position = GTPlayer.Instance.bodyCollider.transform.position +
-                                            GTPlayer.Instance.bodyCollider.transform.forward * 0.5f;
+                isInterfaceLocked = !isInterfaceLocked;
 
-                Canvas.transform.LookAt(GTPlayer.Instance.headCollider.transform);
-                Canvas.transform.Rotate(0f, 180f, 0f);
-                CoreHandler.Instance.OnCurrentHandlerChange -= LockCamera;
-            }
-        };
+                if (isInterfaceLocked)
+                {
+                    LockCamera(CoreHandler.Instance.CurrentHandlerName);
+                    CoreHandler.Instance.OnCurrentHandlerChange += LockCamera;
+                }
+                else
+                {
+                    Canvas.transform.SetParent(null);
+                    Canvas.transform.position = GTPlayer.Instance.bodyCollider.transform.position +
+                                                GTPlayer.Instance.bodyCollider.transform.forward * 0.5f;
+
+                    Canvas.transform.LookAt(GTPlayer.Instance.headCollider.transform);
+                    Canvas.transform.Rotate(0f, 180f, 0f);
+                    CoreHandler.Instance.OnCurrentHandlerChange -= LockCamera;
+                }
+            };
     }
 
     private void LockCamera(string handlerName)
@@ -156,25 +156,25 @@ public class WorldSpaceHandler : Singleton<WorldSpaceHandler>
         Transform fovPanel = tunables.Find("FOVPanel");
         FOVText = fovPanel.Find("FOVText").GetComponent<TextMeshProUGUI>();
         fovPanel.Find("MoreFOV/Collider").AddComponent<PressableButton>().OnPress += () =>
-                CoreHandler.Instance.SetFOV((int)GUIHandler.Instance.FOVSlider.value + 5);
+                    CoreHandler.Instance.SetFOV((int)GUIHandler.Instance.FOVSlider.value + 5);
 
         fovPanel.Find("LessFOV/Collider").AddComponent<PressableButton>().OnPress += () =>
-                CoreHandler.Instance.SetFOV((int)GUIHandler.Instance.FOVSlider.value - 5);
+                    CoreHandler.Instance.SetFOV((int)GUIHandler.Instance.FOVSlider.value - 5);
 
         Transform nearClipPanel = tunables.Find("NearClipPanel");
         NearClipText = nearClipPanel.Find("NearClipText").GetComponent<TextMeshProUGUI>();
         nearClipPanel.Find("MoreNearClip/Collider").AddComponent<PressableButton>().OnPress += () =>
-                CoreHandler.Instance.SetNearClip((int)GUIHandler.Instance.NearClipSlider.value + 1);
+                    CoreHandler.Instance.SetNearClip((int)GUIHandler.Instance.NearClipSlider.value + 1);
 
         nearClipPanel.Find("LessNearClip/Collider").AddComponent<PressableButton>().OnPress += () =>
-                CoreHandler.Instance.SetNearClip((int)GUIHandler.Instance.NearClipSlider.value - 1);
+                    CoreHandler.Instance.SetNearClip((int)GUIHandler.Instance.NearClipSlider.value - 1);
 
         Transform smoothingPanel = tunables.Find("SmoothingPanel");
         SmoothingText = smoothingPanel.Find("SmoothingText").GetComponent<TextMeshProUGUI>();
         smoothingPanel.Find("MoreSmoothing/Collider").AddComponent<PressableButton>().OnPress += () =>
-                CoreHandler.Instance.SetSmoothing(CameraHandler.Instance.SmoothingFactor + 1);
+                    CoreHandler.Instance.SetSmoothing(CameraHandler.Instance.SmoothingFactor + 1);
 
         smoothingPanel.Find("LessSmoothing/Collider").AddComponent<PressableButton>().OnPress += () =>
-                CoreHandler.Instance.SetSmoothing(CameraHandler.Instance.SmoothingFactor - 1);
+                    CoreHandler.Instance.SetSmoothing(CameraHandler.Instance.SmoothingFactor - 1);
     }
 }

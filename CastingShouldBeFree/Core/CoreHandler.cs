@@ -39,7 +39,7 @@ public class CoreHandler : Singleton<CoreHandler>
         GameObject modeHandlersComponents = new("Casting Should Be Free Mode Handlers");
 
         Type[] modeHandlerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type =>
-                type.IsClass && !type.IsAbstract && typeof(ModeHandlerBase).IsAssignableFrom(type)).ToArray();
+                    type.IsClass && !type.IsAbstract && typeof(ModeHandlerBase).IsAssignableFrom(type)).ToArray();
 
         foreach (Type modeHandlerType in modeHandlerTypes)
         {
