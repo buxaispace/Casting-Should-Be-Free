@@ -102,10 +102,7 @@ public class Nametag : MonoBehaviour
 
     public void UpdatePlayerPlatform()
     {
-        if (associatedRig.isLocal)
-            platform = "[PC]";
-        else
-            platform = GetPlayerPlatform();
+        platform = associatedRig.isLocal ? "[PC]" : GetPlayerPlatform();
 
         thirdPersonNametag.PlatformText.text = platform;
         if (!associatedRig.isLocal) firstPersonNametag.PlatformText.text = platform;
@@ -162,7 +159,7 @@ public class Nametag : MonoBehaviour
 
     private string GetPlayerPlatform()
     {
-        string concat = associatedRig.concatStringOfCosmeticsAllowed.ToLower();
+        string concat = associatedRig.rawCosmeticString.ToLower();
 
         if (concat.Contains("s. first login")) return "[STEAM]";
         if (concat.Contains("first login") || concat.Contains("game-purchase") ||
