@@ -124,8 +124,10 @@ public class SettingsHandler : PanelHandlerBase
                         break;
                 }
             });
-        
-        thirdPersonSliderPanel.GetComponentInChildren<Slider>().onValueChanged?.Invoke(PlayerPrefs.GetFloat(ThirdPersonXKey, 0f));
+
+        thirdPersonSliderPanel.GetComponentInChildren<Slider>().onValueChanged
+                             ?.Invoke(PlayerPrefs.GetFloat(ThirdPersonXKey, 0f));
+
         thirdPersonSliderPanel.GetComponentInChildren<Slider>().value = PlayerPrefs.GetFloat(ThirdPersonXKey, 0f);
         ThirdPersonHandler.X                                          = PlayerPrefs.GetFloat(ThirdPersonXKey, 0f);
         ThirdPersonHandler.Y                                          = PlayerPrefs.GetFloat(ThirdPersonYKey, 0f);
