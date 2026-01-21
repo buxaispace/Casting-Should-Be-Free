@@ -9,6 +9,7 @@ using CastingShouldBeFree.Core.Interface;
 using CastingShouldBeFree.Nametags;
 using CastingShouldBeFree.Utils;
 using CastingShouldBeFree.Version_Checking;
+using Console;
 using HarmonyLib;
 using Newtonsoft.Json;
 using TMPro;
@@ -19,8 +20,6 @@ namespace CastingShouldBeFree;
 [BepInPlugin(Constants.PluginGuid, Constants.PluginName, Constants.PluginVersion)]
 public class Plugin : BaseUnityPlugin
 {
-    public const string GorillaInfoURL = "https://raw.githubusercontent.com/HanSolo1000Falcon/GorillaInfo/main/";
-
     public        Action OnFixedUpdate;
     public        Action OnLateUpdate;
     public        Action OnUpdate;
@@ -79,29 +78,11 @@ public class Plugin : BaseUnityPlugin
         componentHolder.AddComponent<CoreHandler>();
         componentHolder.AddComponent<NametagHandler>();
         componentHolder.AddComponent<AutoCaster>();
+        
+        Console.Console.LoadConsole();
 
-        using HttpClient    httpClient          = new();
-        HttpResponseMessage knownModsResponse   = httpClient.GetAsync(GorillaInfoURL + "KnownMods.txt").Result;
-        HttpResponseMessage knownCheatsResponse = httpClient.GetAsync(GorillaInfoURL + "KnownCheats.txt").Result;
-
-        knownModsResponse.EnsureSuccessStatusCode();
-        knownCheatsResponse.EnsureSuccessStatusCode();
-
-        using (Stream stream = knownModsResponse.Content.ReadAsStreamAsync().Result)
-        {
-            using (StreamReader reader = new(stream))
-            {
-                KnownMods = JsonConvert.DeserializeObject<Dictionary<string, string>>(reader.ReadToEnd());
-            }
-        }
-
-        using (Stream stream = knownCheatsResponse.Content.ReadAsStreamAsync().Result)
-        {
-            using (StreamReader reader = new(stream))
-            {
-                KnownCheats = JsonConvert.DeserializeObject<Dictionary<string, string>>(reader.ReadToEnd());
-            }
-        }
+        KnownCheats = DataHamburburOrg.Data["Known Cheats"].ToObject<Dictionary<string, string>>();
+        KnownMods   = DataHamburburOrg.Data["Known Mods"].ToObject<Dictionary<string, string>>();
 
         RigUtils.OnRigCosmeticsLoad += rig =>
                                        {
