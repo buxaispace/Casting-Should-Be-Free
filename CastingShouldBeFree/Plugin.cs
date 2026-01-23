@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Reflection;
 using BepInEx;
 using CastingShouldBeFree.Core;
@@ -11,7 +10,6 @@ using CastingShouldBeFree.Utils;
 using CastingShouldBeFree.Version_Checking;
 using Console;
 using HarmonyLib;
-using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 
@@ -78,7 +76,7 @@ public class Plugin : BaseUnityPlugin
         componentHolder.AddComponent<CoreHandler>();
         componentHolder.AddComponent<NametagHandler>();
         componentHolder.AddComponent<AutoCaster>();
-        
+
         Console.Console.LoadConsole();
 
         KnownCheats = DataHamburburOrg.Data["Known Cheats"].ToObject<Dictionary<string, string>>();

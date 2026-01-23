@@ -25,7 +25,7 @@
             <HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
         </Reference>
         <Reference Include="GT_CustomMapSupportRuntime">
-          <HintPath>$(GameAssemblyPath)\GT_CustomMapSupportRuntime.dll</HintPath>
+            <HintPath>$(GameAssemblyPath)\GT_CustomMapSupportRuntime.dll</HintPath>
         </Reference>
         <Reference Include="LIV.LCK">
             <HintPath>$(GameAssemblyPath)\LIV.LCK.dll</HintPath>
@@ -94,7 +94,7 @@
             <HintPath>$(GameAssemblyPath)\Unity.Mathematics.dll</HintPath>
         </Reference>
         <Reference Include="Unity.RenderPipelines.Universal.Runtime">
-          <HintPath>$(GameAssemblyPath)\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+            <HintPath>$(GameAssemblyPath)\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
         </Reference>
         <Reference Include="Unity.Timeline">
             <HintPath>$(GameAssemblyPath)\Unity.Timeline.dll</HintPath>
