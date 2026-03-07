@@ -3,8 +3,11 @@ using HarmonyLib;
 
 namespace CastingShouldBeFree.Patches;
 
-[HarmonyPatch(typeof(VRRig), "IUserCosmeticsCallback.OnGetUserCosmetics")]
-public static class OnRigCosmeticsLoadPatch
+[HarmonyPatch(typeof(VRRig))]
+internal static class OnCosmeticsLoadedPatch
 {
-    private static void Postfix(VRRig __instance, string cosmetics) => RigUtils.OnRigCosmeticsLoad?.Invoke(__instance);
+    [HarmonyPatch("IUserCosmeticsCallback.OnGetUserCosmetics")]
+    [HarmonyPostfix]
+    private static void OnGetRigCosmetics(VRRig __instance) =>
+            RigUtils.OnRigCosmeticsLoad?.Invoke(__instance);
 }

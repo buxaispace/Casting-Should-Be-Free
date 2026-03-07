@@ -26,13 +26,13 @@ public class Nametag : MonoBehaviour
 
         set
         {
-            if (value != _showTpTag)
-            {
-                _showTpTag = value;
+            if (value == _showTpTag)
+                return;
 
-                if (hasInit)
-                    thirdPersonNametag.Nametag.gameObject.SetActive(value);
-            }
+            _showTpTag = value;
+
+            if (hasInit)
+                thirdPersonNametag.Nametag.gameObject.SetActive(value);
         }
     }
 
@@ -44,11 +44,18 @@ public class Nametag : MonoBehaviour
 
         associatedRig = GetComponent<VRRig>();
 
-        if (associatedRig.isLocal)
-            platform = "[PC]";
+        switch (associatedRig.isLocal)
+        {
+            case true:
+                platform = "[PC]";
 
-        if (!associatedRig.isLocal)
-            firstPersonNametag = SetUpNametagComponents(true);
+                break;
+
+            case false:
+                firstPersonNametag = SetUpNametagComponents(true);
+
+                break;
+        }
 
         thirdPersonNametag = SetUpNametagComponents(false);
 
@@ -159,13 +166,13 @@ public class Nametag : MonoBehaviour
 
     private string GetPlayerPlatform()
     {
-        string concat = associatedRig.rawCosmeticString.ToLower();
+        string concat = string.Concat(associatedRig._playerOwnedCosmetics).ToLower();
 
         if (concat.Contains("s. first login")) return "[STEAM]";
         if (concat.Contains("first login") || concat.Contains("game-purchase") ||
-            associatedRig.OwningNetPlayer.GetPlayerRef().CustomProperties.Count > 1) return "[PC]";
+            associatedRig.creator.GetPlayerRef().CustomProperties.Count > 1) return "[PC]";
 
-        if (platform == "[PC]" || platform == "[STEAM]") return platform;
+        if (platform is "[PC]" or "[STEAM]") return platform;
 
         return "[STANDALONE]";
     }

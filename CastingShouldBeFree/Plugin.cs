@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -6,12 +7,14 @@ using BepInEx;
 using CastingShouldBeFree.Core;
 using CastingShouldBeFree.Core.Interface;
 using CastingShouldBeFree.Nametags;
+using CastingShouldBeFree.Patches;
 using CastingShouldBeFree.Utils;
 using CastingShouldBeFree.Version_Checking;
-using Console;
 using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace CastingShouldBeFree;
 
@@ -31,8 +34,8 @@ public class Plugin : BaseUnityPlugin
 
     public Shader TMP_DistanceField { get; private set; }
 
-    public Dictionary<string, string> KnownMods   { get; private set; }
-    public Dictionary<string, string> KnownCheats { get; private set; }
+    public Dictionary<string, string> KnownMods   { get; private set; } = [];
+    public Dictionary<string, string> KnownCheats { get; private set; } = [];
 
     private void Awake() => Instance = this;
 
@@ -42,6 +45,16 @@ public class Plugin : BaseUnityPlugin
 
         Harmony harmony = new(Constants.PluginGuid);
         harmony.PatchAll();
+
+        VRRigCache.OnRigDeactivated += container =>
+                                       {
+                                           VRRig vrrig = container.vrrig;
+                                           
+                                           if (SetColourPatch.SpawnedRigs.Contains(vrrig))
+                                               SetColourPatch.SpawnedRigs.Remove(vrrig);
+
+                                           RigUtils.OnRigCached?.Invoke(vrrig);
+                                       };
     }
 
     private void Update() => OnUpdate?.Invoke();
@@ -77,17 +90,37 @@ public class Plugin : BaseUnityPlugin
         componentHolder.AddComponent<NametagHandler>();
         componentHolder.AddComponent<AutoCaster>();
 
-        Console.Console.LoadConsole();
-
-        KnownCheats = DataHamburburOrg.Data["Known Cheats"].ToObject<Dictionary<string, string>>();
-        KnownMods   = DataHamburburOrg.Data["Known Mods"].ToObject<Dictionary<string, string>>();
+        StartCoroutine(LoadKnownCheatsAndMods());
 
         RigUtils.OnRigCosmeticsLoad += rig =>
                                        {
                                            Nametag nametag = rig.GetComponent<Nametag>();
-
-                                           if (nametag is not null)
-                                               nametag.UpdatePlayerPlatform();
+                                           nametag?.UpdatePlayerPlatform();
                                        };
+    }
+
+    private IEnumerator LoadKnownCheatsAndMods()
+    {
+        UnityWebRequest webRequest = UnityWebRequest.Get("https://hamburbur.org/data");
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result == UnityWebRequest.Result.Success)
+        {
+            try
+            {
+                string json = webRequest.downloadHandler.text;
+                JObject data = JObject.Parse(json);
+                KnownCheats = data["knownCheats"]!.ToObject<Dictionary<string, string>>();
+                KnownMods = data["knownMods"]!.ToObject<Dictionary<string, string>>();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Caught exception when fetching data from https://hamburbur.org/data (" + e.Message + ")");
+            }
+        }
+        else
+        {
+            Debug.LogError("Failed to fetch data from https://hamburbur.org/data (" + webRequest.error + ")");
+        }
     }
 }

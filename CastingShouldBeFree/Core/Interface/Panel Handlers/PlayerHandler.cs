@@ -19,7 +19,7 @@ public class PlayerHandler : PanelHandlerBase
 
     private LayerMask acceptedLayers;
 
-    private float                               currentRigLerpValue; // autcomplete wanted lastHealth
+    private float                               currentRigLerpValue; // autocomplete wanted lastHealth
     private GorillaTriggerColliderHandIndicator handIndicator;
     private Camera                              pcCamera;
 
@@ -114,11 +114,11 @@ public class PlayerHandler : PanelHandlerBase
 
         Plugin.Instance.OnFixedUpdate += () =>
                                          {
-                                             if (!GorillaParent.hasInstance || GorillaParent.instance.vrrigs == null)
+                                             if (!GorillaParent.hasInstance || VRRigCache.ActiveRigs == null)
                                                  return;
 
                                              if (rigLerpingEnabled)
-                                                 foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig =>
+                                                 foreach (VRRig rig in VRRigCache.ActiveRigs.Where(rig =>
                                                                       !Mathf.Approximately(rig.lerpValueBody,
                                                                               currentRigLerpValue) ||
                                                                       !Mathf.Approximately(rig.lerpValueFingers,
@@ -128,7 +128,7 @@ public class PlayerHandler : PanelHandlerBase
                                                      rig.lerpValueFingers = currentLerp;
                                                  }
                                              else
-                                                 foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig =>
+                                                 foreach (VRRig rig in VRRigCache.ActiveRigs.Where(rig =>
                                                                       !Mathf.Approximately(rig.lerpValueBody,
                                                                               RigLerpBody) ||
                                                                       !Mathf.Approximately(rig.lerpValueFingers,
