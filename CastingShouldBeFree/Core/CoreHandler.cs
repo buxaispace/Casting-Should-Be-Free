@@ -136,8 +136,8 @@ public class CoreHandler : Singleton<CoreHandler>
 
 #region Backing Fields
 
-    private VRRig  _castedRig;
-    private string _currentHandlerName;
+    private VRRig  castedRig;
+    private string currentHandlerName;
 
 #endregion
 
@@ -145,27 +145,27 @@ public class CoreHandler : Singleton<CoreHandler>
 
     public VRRig CastedRig
     {
-        get => _castedRig;
+        get => castedRig;
 
         set
         {
-            if (_castedRig != value)
+            if (castedRig != value)
             {
-                OnCastedRigChange?.Invoke(value, _castedRig);
-                _castedRig = value;
+                OnCastedRigChange?.Invoke(value, castedRig);
+                castedRig = value;
             }
         }
     }
 
     public string CurrentHandlerName
     {
-        get => _currentHandlerName;
+        get => currentHandlerName;
 
         set
         {
-            if (_currentHandlerName != value)
+            if (currentHandlerName != value)
             {
-                _currentHandlerName = value;
+                currentHandlerName = value;
 
                 foreach (string modeHandlerName in ModeHandlers.Keys)
                     ModeHandlers[modeHandlerName].enabled = modeHandlerName == value;

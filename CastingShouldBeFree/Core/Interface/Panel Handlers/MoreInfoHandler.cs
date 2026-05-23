@@ -23,7 +23,7 @@ public class MoreInfoHandler : PanelHandlerBase
         if (currentRig == null)
             return;
 
-        if (currentRig.OwningNetPlayer == null)
+        if (currentRig.creator == null)
         {
             modsText.text =
                     "Casted Player <color=red>Doesn't</color> Have An OwningNetPlayer, Are You Connected To A Room?";
@@ -31,7 +31,7 @@ public class MoreInfoHandler : PanelHandlerBase
             return;
         }
 
-        Hashtable customProps = currentRig.OwningNetPlayer.GetPlayerRef().CustomProperties;
+        Hashtable customProps = currentRig.creator.GetPlayerRef().CustomProperties;
         string    text        = "";
 
         foreach (string prop in customProps.Keys)

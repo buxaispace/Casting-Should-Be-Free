@@ -1,3 +1,4 @@
+using System.Linq;
 using CastingShouldBeFree.Utils;
 using UnityEngine;
 
@@ -34,29 +35,19 @@ public class AutoCaster : Singleton<AutoCaster>
             if (Mathf.Approximately(actualVelocity, 0f)) actualVelocity = 0.0001f;
             float ratio                                                 = distance / actualVelocity;
 
-            if (ratio < fastestAndClosestRatioBest)
-            {
-                fastestAndClosestRatioBest = ratio;
-                chosenRig                  = untaggedRig;
-            }
+            if (!(ratio < fastestAndClosestRatioBest))
+                continue;
+
+            fastestAndClosestRatioBest = ratio;
+            chosenRig                  = untaggedRig;
         }
 
         CoreHandler.Instance.CastedRig = chosenRig;
     }
 
-    private float GetTagDistance(VRRig rig)
-    {
-        float closestDistance = float.MaxValue;
-
-        foreach (VRRig taggedRig in TagManager.Instance.TaggedRigs)
-        {
-            if (taggedRig == rig)
-                continue;
-
-            float distance = Vector3.Distance(taggedRig.transform.position, rig.transform.position);
-            if (distance < closestDistance) closestDistance = distance;
-        }
-
-        return closestDistance;
-    }
+    private float GetTagDistance(VRRig rig) =>
+            (from taggedRig in TagManager.Instance.TaggedRigs
+             where taggedRig != rig
+             select Vector3.Distance(taggedRig.transform.position, rig.transform.position)).Prepend(float.MaxValue)
+           .Min();
 }

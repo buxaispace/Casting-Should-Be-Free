@@ -45,16 +45,6 @@ public class Plugin : BaseUnityPlugin
 
         Harmony harmony = new(Constants.PluginGuid);
         harmony.PatchAll();
-
-        VRRigCache.OnRigDeactivated += container =>
-                                       {
-                                           VRRig vrrig = container.vrrig;
-                                           
-                                           if (SetColourPatch.SpawnedRigs.Contains(vrrig))
-                                               SetColourPatch.SpawnedRigs.Remove(vrrig);
-
-                                           RigUtils.OnRigCached?.Invoke(vrrig);
-                                       };
     }
 
     private void Update() => OnUpdate?.Invoke();

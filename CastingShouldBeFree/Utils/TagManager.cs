@@ -4,8 +4,8 @@ namespace CastingShouldBeFree.Utils;
 
 public class TagManager : Singleton<TagManager>
 {
-    public readonly HashSet<VRRig> TaggedRigs   = new();
-    public readonly HashSet<VRRig> UnTaggedRigs = new();
+    public readonly HashSet<VRRig> TaggedRigs   = [];
+    public readonly HashSet<VRRig> UnTaggedRigs = [];
 
     private void Start()
     {

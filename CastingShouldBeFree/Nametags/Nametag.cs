@@ -136,8 +136,8 @@ public class Nametag : MonoBehaviour
         nametagComponents.PlatformText = nametagComponents.Nametag.Find("Platform").GetComponent<TextMeshProUGUI>();
         nametagComponents.FPSText      = nametagComponents.Nametag.Find("FPS").GetComponent<TextMeshProUGUI>();
 
-        nametagComponents.NameText.text = associatedRig.OwningNetPlayer != null
-                                                  ? associatedRig.OwningNetPlayer.NickName
+        nametagComponents.NameText.text = associatedRig.creator != null
+                                                  ? associatedRig.creator.NickName
                                                   : associatedRig.playerText1.text;
 
         SetLayer(firstPerson, nametagComponents.Nametag);

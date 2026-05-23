@@ -16,12 +16,12 @@ public class PressableButton : MonoBehaviour
         if (Time.time - touchTime < DebounceTime)
             return;
 
-        if (other.GetComponentInParent<GorillaTriggerColliderHandIndicator>() is not null)
-        {
-            touchTime = Time.time;
-            OnPress?.Invoke();
-            GorillaTagger.Instance.StartVibration(
-                    other.GetComponentInParent<GorillaTriggerColliderHandIndicator>().isLeftHand, 0.2f, 0.2f);
-        }
+        if (other.GetComponentInParent<GorillaTriggerColliderHandIndicator>() is null)
+            return;
+
+        touchTime = Time.time;
+        OnPress?.Invoke();
+        GorillaTagger.Instance.StartVibration(
+                other.GetComponentInParent<GorillaTriggerColliderHandIndicator>().isLeftHand, 0.2f, 0.2f);
     }
 }

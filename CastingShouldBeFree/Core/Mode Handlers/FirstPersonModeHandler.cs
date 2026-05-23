@@ -36,7 +36,7 @@ public class FirstPersonModeHandler : ModeHandlerBase
     private void OnEnable()
     {
         OnCastedRigChange(CoreHandler.Instance.CastedRig, null);
-        CameraHandler.Instance.ToggleVisibility(false);
+        CameraHandler.Instance.ToggleVisibility(true);
         CoreHandler.Instance.OnCastedRigChange += OnCastedRigChange;
         RigUtils.OnRigCosmeticsChange          += OnRigCosmeticsUpdate;
     }
@@ -46,7 +46,7 @@ public class FirstPersonModeHandler : ModeHandlerBase
         CoreHandler.Instance.OnCastedRigChange -= OnCastedRigChange;
         RigUtils.OnRigCosmeticsChange          -= OnRigCosmeticsUpdate;
         ToggleFaceCosmetics(CoreHandler.Instance.CastedRig, true);
-        CameraHandler.Instance.ToggleVisibility(true);
+        CameraHandler.Instance.ToggleVisibility(false);
     }
 
     public static string HandlerNameStatic() => "First Person";

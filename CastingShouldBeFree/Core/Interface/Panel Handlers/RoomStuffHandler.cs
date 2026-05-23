@@ -28,7 +28,7 @@ public class RoomStuffHandler : PanelHandlerBase
 
     private string FilterRoomName(string roomName)
     {
-        string fallback = "12345";
+        const string Fallback = "12345";
 
         roomName = roomName.Trim();
         roomName = roomName.ToUpper();
@@ -39,27 +39,16 @@ public class RoomStuffHandler : PanelHandlerBase
                 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
         ];
 
-        List<char> unnaceptableLetters = new(); // will be killed if your room name contains any of these!!!!
+        List<char> unnaceptableLetters = []; // will be killed if your room name contains any of these!!!!
 
-        foreach (char c in roomName)
-            if (!acceptedLetters.Contains(c) && !unnaceptableLetters.Contains(c))
-                unnaceptableLetters.Add(c);
+        foreach (char c in roomName.Where(c => !acceptedLetters.Contains(c) && !unnaceptableLetters.Contains(c)))
+            unnaceptableLetters.Add(c);
 
-        foreach (char c in unnaceptableLetters)
-            roomName = roomName.Replace(c.ToString(), string.Empty);
+        roomName = unnaceptableLetters.Aggregate(roomName, (current, c) => current.Replace(c.ToString(), string.Empty));
 
-        if (string.IsNullOrWhiteSpace(roomName))
-            return fallback;
+        if (string.IsNullOrWhiteSpace(roomName) || GorillaComputer.instance == null || !GorillaComputer.instance.CheckAutoBanListForName(roomName))
+            return Fallback;
 
-        if (GorillaComputer.instance == null)
-            return fallback;
-
-        if (!GorillaComputer.instance.CheckAutoBanListForName(roomName))
-            return fallback;
-
-        if (roomName.Length > 12)
-            return roomName.Substring(0, 12);
-
-        return roomName;
+        return roomName.Length > 12 ? roomName[..12] : roomName;
     }
 }

@@ -18,15 +18,15 @@ public class DraggableUI : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     canvas.transform as RectTransform,
                     eventData.position,
                     eventData.pressEventCamera,
                     out Vector2 localPointerPosition))
-        {
-            Vector3 offsetToOriginal = localPointerPosition - originalLocalPointerPosition;
-            rectTransform.localPosition = (Vector3)originalPanelLocalPosition + offsetToOriginal;
-        }
+            return;
+
+        Vector3 offsetToOriginal = localPointerPosition - originalLocalPointerPosition;
+        rectTransform.localPosition = (Vector3)originalPanelLocalPosition + offsetToOriginal;
     }
 
     public void OnPointerDown(PointerEventData eventData)

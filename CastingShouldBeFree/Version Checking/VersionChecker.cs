@@ -12,7 +12,7 @@ public class VersionChecker : MonoBehaviour
         using HttpClient client = new();
         HttpResponseMessage response = client
                                       .GetAsync(
-                                               "https://raw.githubusercontent.com/HanSolo1000Falcon/CastingShouldBeFree/master/version.txt")
+                                               "https://raw.githubusercontent.com/hamburbur-org/Casting-Should-Be-Free/master/version.txt")
                                       .Result;
 
         response.EnsureSuccessStatusCode();
