@@ -37,7 +37,7 @@ public class CameraHandler : Singleton<CameraHandler>
                     material.EnableKeyword("_USE_TEXTURE");
             }
 
-        obj.layer = UnityLayer.FirstPersonOnly.GetIndex();
+        obj.SetLayer(UnityLayer.FirstPersonOnly);
     }
 
     public void ToggleVisibility(bool toggled) => ToggleVisibilityInternal(gameObject, toggled);
