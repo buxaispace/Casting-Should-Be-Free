@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using CastingShouldBeFree.Core.Mode_Handlers;
+using CastingShouldBeFree.Core.VisualPresets;
 using CastingShouldBeFree.Nametags;
 using GorillaNetworking;
 using TMPro;
@@ -67,6 +68,7 @@ public class SettingsHandler : PanelHandlerBase
                 () => NametagHandler.Instance.NametagsEnabled = !NametagHandler.Instance.NametagsEnabled);
 
         SetUpThirdPersonSliders();
+        SetUpVisualPresetControls();
     }
 
     private void SetUpThirdPersonSliders()
@@ -132,6 +134,68 @@ public class SettingsHandler : PanelHandlerBase
         ThirdPersonHandler.X                                          = PlayerPrefs.GetFloat(ThirdPersonXKey, 0f);
         ThirdPersonHandler.Y                                          = PlayerPrefs.GetFloat(ThirdPersonYKey, 0f);
         ThirdPersonHandler.Z                                          = PlayerPrefs.GetFloat(ThirdPersonZKey, 0f);
+    }
+
+    private void SetUpVisualPresetControls()
+    {
+        VisualPresetApplier.LoadFromPlayerPrefs();
+
+        Transform settingsContent = transform.Find("SettingsGrid/Viewport/Content");
+        Transform template        = settingsContent.Find("Nametags");
+        if (template == null)
+            template = settingsContent.GetChild(0);
+
+        Transform presetRow = Instantiate(template, settingsContent);
+        presetRow.name = "VisualPreset";
+        Button presetButton = presetRow.GetComponent<Button>();
+        presetButton.onClick = new Button.ButtonClickedEvent();
+        presetButton.onClick.AddListener(() =>
+        {
+            VisualPresetApplier.CyclePreset();
+            RefreshVisualPresetLabel(presetRow);
+        });
+        RefreshVisualPresetLabel(presetRow);
+
+        Transform sliderTemplate = transform.Find("ThirdPersonPanel");
+        if (sliderTemplate == null)
+            return;
+
+        Transform intensityPanel = Instantiate(sliderTemplate, sliderTemplate.parent);
+        intensityPanel.name = "VisualIntensityPanel";
+
+        Button extraButton = intensityPanel.GetComponentInChildren<Button>();
+        if (extraButton != null)
+            extraButton.gameObject.SetActive(false);
+
+        Slider slider = intensityPanel.GetComponentInChildren<Slider>();
+        slider.onValueChanged = new Slider.SliderEvent();
+        slider.minValue       = 0f;
+        slider.maxValue       = 1f;
+        slider.wholeNumbers   = false;
+        slider.onValueChanged.AddListener(value =>
+        {
+            VisualPresetApplier.SetIntensity(value);
+            RefreshVisualIntensityLabel(intensityPanel, value);
+        });
+
+        float storedIntensity = VisualPresetApplier.Intensity;
+        slider.SetValueWithoutNotify(storedIntensity);
+        RefreshVisualIntensityLabel(intensityPanel, storedIntensity);
+    }
+
+    private static void RefreshVisualPresetLabel(Transform row)
+    {
+        bool light = VisualPresetApplier.CurrentPreset == VisualPreset.Light;
+        string state = light
+                ? "<color=green>Light</color>"
+                : "<color=red>Off</color>";
+        row.GetComponentInChildren<TextMeshProUGUI>().text = $"Visual Preset\n{state}";
+    }
+
+    private static void RefreshVisualIntensityLabel(Transform panel, float value)
+    {
+        panel.GetComponentInChildren<TextMeshProUGUI>().text =
+                $"Visual Intensity: {value.ToString("F", CultureInfo.InvariantCulture)}";
     }
 
     private void SetUpSetting(string settingPath, string settingName, Func<bool> getSetting, UnityAction setSetting)
