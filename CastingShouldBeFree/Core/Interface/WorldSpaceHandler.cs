@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CastingShouldBeFree.Core.Mode_Handlers;
+using CastingShouldBeFree.Core.VisualPresets;
 using CastingShouldBeFree.Utils;
 using GorillaLocomotion;
 using TMPro;
@@ -133,6 +134,7 @@ public class WorldSpaceHandler : Singleton<WorldSpaceHandler>
         RenderTextureCamera.transform.localRotation = Quaternion.identity;
 
         RenderTextureCamera.targetTexture = renderTexture;
+        VisualPresetApplier.Register(RenderTextureCamera);
     }
 
     private void SetUpCameraModes()

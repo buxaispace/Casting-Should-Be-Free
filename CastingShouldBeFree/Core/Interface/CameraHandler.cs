@@ -1,3 +1,4 @@
+using CastingShouldBeFree.Core.VisualPresets;
 using CastingShouldBeFree.Utils;
 using UnityEngine;
 using UnityEngine.XR;
@@ -21,6 +22,8 @@ public class CameraHandler : Singleton<CameraHandler>
         Plugin.Instance.PCCamera.transform.SetParent(transform);
         Plugin.Instance.PCCamera.transform.localPosition = Vector3.zero;
         Plugin.Instance.PCCamera.transform.localRotation = Quaternion.identity;
+
+        VisualPresetApplier.Register(Plugin.Instance.PCCamera.GetComponent<Camera>());
     }
 
     private void FixEverything(GameObject obj)

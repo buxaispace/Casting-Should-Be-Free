@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <AssemblyName>Assembly-CSharp</AssemblyName>
+        <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(GTManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>$(GTManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AnimationModule">
+            <HintPath>$(GTManagedPath)\UnityEngine.AnimationModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>$(GTManagedPath)\UnityEngine.UI.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(GTManagedPath)\Unity.TextMeshPro.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Photon3Unity3D">
+            <HintPath>$(GTManagedPath)\Photon3Unity3D.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PhotonRealtime">
+            <HintPath>$(GTManagedPath)\PhotonRealtime.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+</Project>
